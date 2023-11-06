@@ -1,4 +1,5 @@
 const path = require("path");
+const auth = require('./auth');
 const express = require("express");
 const WebSocket = require("ws");
 const fs = require("fs");
@@ -8,7 +9,8 @@ var privateKey = fs.readFileSync("server.key", "utf8");
 var certificate = fs.readFileSync("server.cert", "utf8");
 var credentials = { key: privateKey, cert: certificate };
 
-const HTTPS_PORT = 443;
+//Change portf if required (Requires change in client.html)
+const HTTPS_PORT = 8443;
 const app = express();
 const httpsServer = https.createServer(credentials, app);
 const wsServer = new WebSocket.Server({ server: httpsServer });
@@ -38,6 +40,8 @@ wsServer.on("connection", (ws, req) => {
 	});
 });
 
+app.use(auth);
 app.use(express.static("."));
-app.get("/client", (req, res) => res.sendFile(path.resolve(__dirname, "./client.html")));
+app.get("/*", (req, res) => res.sendFile(path.resolve(__dirname, "./client.html")));
+
 httpsServer.listen(HTTPS_PORT, () => console.log(`HTTPS server listening at ${HTTPS_PORT}`));
