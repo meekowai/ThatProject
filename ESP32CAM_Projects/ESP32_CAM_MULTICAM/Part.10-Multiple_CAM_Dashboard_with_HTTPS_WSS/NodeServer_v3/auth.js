@@ -1,5 +1,5 @@
 var auth = require('basic-auth');
-
+//edit 'user' and 'secret'
 var admins = {
   'user': { password: 'secret' },
 };
