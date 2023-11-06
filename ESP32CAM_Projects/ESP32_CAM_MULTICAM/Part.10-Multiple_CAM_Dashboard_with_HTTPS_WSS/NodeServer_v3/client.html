@@ -31,8 +31,10 @@
         var imageFrame;
 
         console.log("host :", window.location.hostname);
-
-        const WS_URL = 'wss://' + window.location.hostname;
+        //port 443
+        //const WS_URL = 'wss://' + window.location.hostname;
+        //different port
+        const WS_URL = 'wss://' + window.location.hostname + ":8443";
         const ws = new WebSocket(WS_URL);
         let urlObject_1, urlObject_2;
 
