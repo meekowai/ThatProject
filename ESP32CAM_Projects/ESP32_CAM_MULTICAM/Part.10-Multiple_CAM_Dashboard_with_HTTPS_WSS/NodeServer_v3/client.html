@@ -23,30 +23,63 @@
             <button class="button" id="cam_2_save" onclick="saveFunc('cam_2_enabler')"
                 style="background-color: #008cba;">Save to Image</button>
         </div>
+		
+		<div class="card">
+            <img id="ESP32-3" src="" />
+            <h2><b>CAM 3 Live <span class="dot" id="cam_3_red_dot" style="visibility: hidden;"></span></b></h2>
+            <button class="button" id="cam_3_enabler" onclick="buttonFunc('cam_3_enabler')">Play</button>
+            <button class="button" id="cam_3_save" onclick="saveFunc('cam_3_enabler')"
+                style="background-color: #008cba;">Save to Image</button>
+        </div>
+		
+		<div class="card">
+            <img id="ESP32-4" src="" />
+            <h2><b>CAM 4 Live <span class="dot" id="cam_4_red_dot" style="visibility: hidden;"></span></b></h2>
+            <button class="button" id="cam_4_enabler" onclick="buttonFunc('cam_4_enabler')">Play</button>
+            <button class="button" id="cam_4_save" onclick="saveFunc('cam_4_enabler')"
+                style="background-color: #008cba;">Save to Image</button>
+        </div>
     </div>
 
     <script>
         const img_1 = document.getElementById("ESP32-1");
         const img_2 = document.getElementById("ESP32-2");
+		const img_3 = document.getElementById("ESP32-3");
+		const img_4 = document.getElementById("ESP32-4");
         var imageFrame;
 
         console.log("host :", window.location.hostname);
-        //port 443
-        //const WS_URL = 'wss://' + window.location.hostname;
-        //different port
+
         const WS_URL = 'wss://' + window.location.hostname + ":8443";
         const ws = new WebSocket(WS_URL);
-        let urlObject_1, urlObject_2;
+        let urlObject_1, urlObject_2, urlObject_3, urlObject_4;
 
         window["cam_1_enabler"] = false;
         window["cam_2_enabler"] = false;
+		window["cam_3_enabler"] = false;
+		window["cam_4_enabler"] = false;
 
         function saveFunc(source) {
-            var blobUrl = source === "cam_1_enabler" ? img_1.src : img_2.src;
-            if (blobUrl.indexOf("blob") == -1) {
+            var blobUrl;
+			var fileName;
+			
+			if  (source === "cam_1_enabler") {
+				blobUrl = img_1.src;
+				fileName = getFomattedTime("ESP32CAM1") + ".jpeg";
+			} else if (source === "cam_2_enabler") {
+				blobUrl = img_2.src;
+				fileName = getFomattedTime("ESP32CAM2") + ".jpeg";
+			} else if (source === "cam_3_enabler") {
+				blobUrl = img_3.src;
+				fileName = getFomattedTime("ESP32CAM3") + ".jpeg";
+			} else if (source === "cam_4_enabler") {
+				blobUrl = img_4.src;
+				fileName = getFomattedTime("ESP32CAM4") + ".jpeg";
+			} else {}
+			
+			if (blobUrl.indexOf("blob") == -1) {
                 return;
             }
-            var fileName = getFomattedTime(source === "cam_1_enabler" ? "ESP32CAM1" : "ESP32CAM2") + ".jpeg";
             forceDownload(blobUrl, fileName);
         }
 
@@ -92,6 +125,8 @@
         function hideRedDot() {
             document.getElementById("cam_1_red_dot").style.visibility = "hidden";
             document.getElementById("cam_2_red_dot").style.visibility = "hidden";
+			document.getElementById("cam_3_red_dot").style.visibility = "hidden";
+			document.getElementById("cam_4_red_dot").style.visibility = "hidden";
         }
 
         setInterval(hideRedDot, 1000);
@@ -119,7 +154,7 @@
                 }
                 urlObject_1 = URL.createObjectURL(blobObj);
                 imageFrame.src = urlObject_1;
-            } else {
+            } else if (currentCam == 2) {
                 imageFrame = img_2;
                 document.getElementById("cam_2_red_dot").style.visibility = "visible";
                 if (!window["cam_2_enabler"]) return;
@@ -128,6 +163,24 @@
                 }
                 urlObject_2 = URL.createObjectURL(blobObj);
                 imageFrame.src = urlObject_2;
+            } else if (currentCam == 3) {
+                imageFrame = img_3;
+                document.getElementById("cam_3_red_dot").style.visibility = "visible";
+                if (!window["cam_3_enabler"]) return;
+                if (urlObject_3) {
+                    URL.revokeObjectURL(urlObject_3);
+                }
+                urlObject_3 = URL.createObjectURL(blobObj);
+                imageFrame.src = urlObject_3;
+            } else {
+                imageFrame = img_4;
+                document.getElementById("cam_4_red_dot").style.visibility = "visible";
+                if (!window["cam_4_enabler"]) return;
+                if (urlObject_4) {
+                    URL.revokeObjectURL(urlObject_4);
+                }
+                urlObject_4 = URL.createObjectURL(blobObj);
+                imageFrame.src = urlObject_4;
             }
         }
     </script>
