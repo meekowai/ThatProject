@@ -1,5 +1,5 @@
 Added 'basic-auth'
-  - run 'npm install basic-auth' in console
+  - run 'npm install basic-auth' in console (i.e. Raspberry)
   - declare 'user' and 'secret' in auth.js
 
     
