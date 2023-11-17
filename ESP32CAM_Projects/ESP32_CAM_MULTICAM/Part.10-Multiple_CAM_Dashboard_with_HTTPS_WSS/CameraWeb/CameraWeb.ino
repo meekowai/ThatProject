@@ -38,6 +38,7 @@ const char ssl_ca_cert[] PROGMEM = \
     "KOqkqm57TH2H3eDJAkSnh6/DNFu0Qg==\n" \
     "-----END CERTIFICATE-----\n";
 
+
 using namespace websockets;
 WebsocketsClient client;
 bool isWebSocketConnected;
@@ -91,27 +92,29 @@ void setup() {
   }
  
 
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid, password,0,bssid,true);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.print("!wifi\n");
   }
-  Serial.println("");
-  Serial.println("WiFi connected");
-
+  //Serial.println("");
+  Serial.println("WiFi connected\n");
+  Serial.printf("IP address: %s\r\n",WiFi.localIP().toString().c_str());
+  Serial.printf("Netmask   : %s\r\n",WiFi.subnetMask().toString());
+  Serial.printf("Gateway   : %s\r\n",WiFi.gatewayIP().toString());
+  
   client.onEvent(onEventsCallback);
   webSocketConnect();
 }
 
 void webSocketConnect(){
-  //uncomment for ssl
   client.setCACert(ssl_ca_cert);
    while(!client.connect(websocket_server_host)){
     delay(500);
-    Serial.print(".");
+    Serial.print("!wss\n");
   }
-  Serial.println("Websocket Connected!");
+  Serial.println("\nWebsocket Connected!\n");
 }
 
 void loop() {
@@ -135,7 +138,9 @@ void loop() {
   }
   
   //fb->buf[12] = 0x01; //FIRST CAM
-  fb->buf[12] = 0x02; //SECOND CAM
+  //fb->buf[12] = 0x02; //SECOND CAM
+  //fb->buf[12] = 0x03; //THIRD CAM
+  fb->buf[12] = 0x04; //FOURTH CAM
 
   client.sendBinary((const char*) fb->buf, fb->len);
   esp_camera_fb_return(fb);
